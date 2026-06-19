@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LION LAUNCHER</title>
+
+<style>
+:root{
+    --bg:#0b0f14;
+    --panel:#111826;
+    --card:rgba(255,255,255,0.05);
+    --stroke:rgba(255,255,255,0.08);
+    --accent:#2f5d7c;
+}
+
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:var(--bg);
+    color:#e6e6e6;
+    overflow:hidden;
+}
+
+/* LOGIN */
+#login{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:radial-gradient(circle at top, #111826, #05070a);
+}
+
+.login-box{
+    background:var(--panel);
+    padding:25px;
+    border-radius:18px;
+    border:1px solid var(--stroke);
+    width:300px;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border-radius:10px;
+    border:1px solid var(--stroke);
+    background:#0b0f14;
+    color:white;
+}
+
+/* APP */
+#app{
+    display:none;
+    height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:220px;
+    height:100vh;
+    position:fixed;
+    background:var(--panel);
+    padding:15px;
+    border-right:1px solid var(--stroke);
+}
+
+.sidebar h2{
+    color:var(--accent);
+}
+
+/* NAV */
+.nav-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px;
+    margin-top:10px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.nav-item:hover{
+    background:rgba(255,255,255,0.06);
+}
+
+.nav-item.active{
+    background:rgba(47,93,124,0.25);
+}
+
+/* ICONOS */
+.icon{
+    width:22px;
+    height:22px;
+    fill:#cfd6dd;
+    opacity:0.9;
+    transition:.2s;
+}
+
+.nav-item:hover .icon{
+    fill:white;
+    opacity:1;
+    transform:scale(1.05);
+}
+
+.nav-item.active .icon{
+    fill:var(--accent);
+    opacity:1;
+}
+
+/* CONTENT */
+.content{
+    margin-left:220px;
+    padding:20px;
+    height:100vh;
+    overflow:auto;
+}
+
+.page{display:none;}
+.page.active{display:block;}
+
+/* CARDS */
+.card{
+    background:var(--card);
+    border:1px solid var(--stroke);
+    padding:15px;
+    border-radius:15px;
+    margin-top:10px;
+}
+
+/* GAME */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:10px;
+}
+
+.game{
+    background:rgba(255,255,255,0.04);
+    padding:12px;
+    border-radius:12px;
+}
+
+.game button{
+    margin-top:10px;
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    background:var(--accent);
+    color:white;
+}
+
+/* PROGRESS BAR */
+.bar-container{
+    width:100%;
+    height:6px;
+    background:#1b1f2a;
+    border-radius:10px;
+    margin-top:8px;
+    overflow:hidden;
+}
+
+.bar{
+    height:100%;
+    width:0%;
+    background:var(--accent);
+    transition:.2s;
+}
+
+/* TRAILER */
+iframe{
+    width:100%;
+    height:300px;
+    border-radius:12px;
+    border:none;
+}
+
+/* PROFILE */
+.profile{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.avatar{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:var(--accent);
+}
+
+/* MOBILE */
+@media (max-width:768px){
+
+.sidebar{
+    width:100%;
+    height:70px;
+    bottom:0;
+    top:auto;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    border-top:1px solid var(--stroke);
+    border-right:none;
+}
+
+.nav-item{
+    flex-direction:column;
+    font-size:12px;
+    margin:0;
+    padding:10px;
+}
+
+.content{
+    margin-left:0;
+    padding-bottom:90px;
+}
+
+.grid{
+    grid-template-columns:1fr;
+}
+
+.game button{
+    padding:14px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+    <div class="login-box">
+        <h2>Login</h2>
+        <input id="user" placeholder="Usuario">
+        <input id="pass" type="password" placeholder="Contraseña">
+        <button onclick="login()">Entrar</button>
+    </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<div class="sidebar">
+    <h2>LION</h2>
+
+    <div class="nav-item active" onclick="openPage('games', event)">
+        <svg class="icon" viewBox="0 0 24 24">
+        <path d="M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+        </svg>
+        Tus juegos
+    </div>
+
+    <div class="nav-item" onclick="openPage('store', event)">
+        <svg class="icon" viewBox="0 0 24 24">
+        <path d="M6 7h12l1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L6 7z"/>
+        </svg>
+        Tienda
+    </div>
+
+    <div class="nav-item" onclick="openPage('trailers', event)">
+        <svg class="icon" viewBox="0 0 24 24">
+        <path d="M10 8l6 4-6 4z"/>
+        </svg>
+        Trailers
+    </div>
+
+    <div class="nav-item" onclick="openPage('profile', event)">
+        <svg class="icon" viewBox="0 0 24 24">
+        <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"/>
+        </svg>
+        Perfil
+    </div>
+</div>
+
+<div class="content">
+
+<!-- GAMES -->
+<div id="games" class="page active">
+    <h2>Tus juegos</h2>
+
+    <div class="grid">
+
+        <div class="game">
+            <h3>The Factory Ch.1</h3>
+            <small id="statusGame">No en wishlist</small>
+
+            <div class="bar-container">
+                <div id="bar" class="bar"></div>
+            </div>
+
+            <button id="gameBtn" onclick="gameAction()">Añadir a Wishlist</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- STORE -->
+<div id="store" class="page">
+    <h2>Tienda</h2>
+
+    <div class="card">
+        <h3>The Factory Chapter 1</h3>
+        <p>Juego en desarrollo</p>
+    </div>
+</div>
+
+<!-- TRAILERS -->
+<div id="trailers" class="page">
+    <h2>Trailers</h2>
+
+    <div class="card">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>
+    </div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+    <h2>Perfil</h2>
+
+    <div class="card profile">
+        <div class="avatar"></div>
+        <div>
+            <h3 id="username"></h3>
+            <small>Usuario local</small>
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* LOGIN */
+function login(){
+    const u = document.getElementById("user").value;
+    if(!u.trim()) return;
+
+    localStorage.setItem("user", u);
+
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+
+    document.getElementById("username").innerText = u;
+}
+
+/* NAV */
+function openPage(id, e){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+    e.target.classList.add("active");
+}
+
+/* AUTO LOGIN */
+window.onload = ()=>{
+    const u = localStorage.getItem("user");
+    if(u){
+        document.getElementById("login").style.display="none";
+        document.getElementById("app").style.display="block";
+        document.getElementById("username").innerText = u;
+    }
+
+    updateGameUI();
+}
+
+/* SYSTEM */
+let gameState = localStorage.getItem("factory_state") || "not_wishlist";
+let progress = 0;
+let downloading = false;
+
+const downloadLink = "https://www.mediafire.com/";
+
+function updateGameUI(){
+
+    const btn = document.getElementById("gameBtn");
+    const status = document.getElementById("statusGame");
+
+    if(gameState === "not_wishlist"){
+        btn.innerText = "Añadir a Wishlist";
+        status.innerText = "No en wishlist";
+    }
+
+    if(gameState === "wishlist"){
+        btn.innerText = "Descargar";
+        status.innerText = "En wishlist";
+    }
+
+    if(gameState === "downloading"){
+        btn.innerText = "Descargando " + progress + "%";
+        status.innerText = "Descargando...";
+    }
+
+    if(gameState === "downloaded"){
+        btn.innerText = "Instalar";
+        status.innerText = "Descargado";
+    }
+
+    if(gameState === "installed"){
+        btn.innerText = "Jugar";
+        status.innerText = "Instalado";
+    }
+
+    document.getElementById("bar").style.width = progress + "%";
+}
+
+/* DOWNLOAD */
+function startDownload(){
+
+    if(downloading) return;
+
+    downloading = true;
+    progress = 0;
+    gameState = "downloading";
+
+    let interval = setInterval(()=>{
+
+        progress += Math.floor(Math.random()*10)+5;
+
+        if(progress >= 100){
+            progress = 100;
+            clearInterval(interval);
+            downloading = false;
+
+            gameState = "downloaded";
+            localStorage.setItem("factory_state", gameState);
+        }
+
+        updateGameUI();
+
+    }, 400);
+}
+
+function gameAction(){
+
+    if(gameState === "not_wishlist"){
+        gameState = "wishlist";
+        localStorage.setItem("factory_state", gameState);
+        updateGameUI();
+        return;
+    }
+
+    if(gameState === "wishlist"){
+        window.open(downloadLink, "_blank");
+        startDownload();
+        return;
+    }
+
+    if(gameState === "downloaded"){
+        gameState = "installed";
+        localStorage.setItem("factory_state", gameState);
+        updateGameUI();
+        return;
+    }
+
+    if(gameState === "installed"){
+        alert("🎮 Iniciando The Factory Ch.1...");
+    }
+}
+
+</script>
+
+</body>
+</html>
